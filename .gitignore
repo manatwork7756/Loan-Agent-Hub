@@ -1,0 +1,20 @@
+# Virtual environments
+venv/
+.venv/
+backend/venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+*.env
+.env.local
+
+# Node modules (if React is a frontend)
+node_modules/
+
+# Build files
+dist/
+build/
