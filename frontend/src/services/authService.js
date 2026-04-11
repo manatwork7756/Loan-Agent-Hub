@@ -1,25 +1,22 @@
-// import axios from "axios";
+import axios from "axios";
 
-import api from "./api"; 
-
-
-import api from "./api"; // 👈 use common axios instance
+const API = "https://credoai-backend.onrender.com/";
 
 const authService = {
   login: (email, password) =>
-    api.post(`/auth/login`, { email, password }),
+    axios.post(`${API}/auth/login`, { email, password }),
 
   register: (data) =>
-    api.post(`/auth/register`, data),
+    axios.post(`${API}/auth/register`, data),
 
   verifyOtp: (email, otp) =>
-    api.post(`/auth/verify-otp`, { email, otp }),
+    axios.post(`${API}/auth/verify-otp`, { email, otp }),
 
   forgotPassword: (email) =>
-    api.post(`/auth/forgot-password`, { email }),
+    axios.post(`${API}/auth/forgot-password`, { email }),
 
   resetPassword: (email, otp, new_password) =>
-    api.post(`/auth/reset-password`, {
+    axios.post(`${API}/auth/reset-password`, {
       email,
       otp,
       new_password,
