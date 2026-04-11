@@ -14,7 +14,7 @@ app = FastAPI()
 
 origins = [
     "http://localhost:5173",
-    "https://credo-ai-git-main-chinmayshukla831-9912s-projects.vercel.app",
+    "https://credo-ai.vercel.app/auth",
 ]
 
 app.add_middleware(
