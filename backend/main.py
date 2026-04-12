@@ -5,7 +5,12 @@ from contextlib import asynccontextmanager
 import os
 
 from config.settings import settings
-from routes import auth, loan, admin, chatbot
+from routes.auth import router as auth_router
+from routes.loan import router as loan_router
+from routes.admin import router as admin_router
+from routes.chatbot import router as chatbot_router
+from routes.payment import router as payment_router
+from routes.documents import router as documents_router
 from routes.payment import router as payment_router
 from routes.documents import router as documents_router
 from fastapi.middleware.cors import CORSMiddleware
@@ -56,10 +61,10 @@ app.add_middleware(
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
-app.include_router(auth.router)
-app.include_router(chatbot.router)
-app.include_router(loan.router)
-app.include_router(admin.router)
+app.include_router(auth_router)
+app.include_router(chatbot_router)
+app.include_router(loan_router)
+app.include_router(admin_router)
 app.include_router(payment_router)
 app.include_router(documents_router)
 
