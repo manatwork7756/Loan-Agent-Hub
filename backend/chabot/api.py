@@ -6,27 +6,30 @@ from dotenv import load_dotenv
 import os
 import re
 import requests
+from fastapi import APIRouter
+router = APIRouter()
 
-load_dotenv(dotenv_path=".env")
+# load_dotenv(dotenv_path=".env")
 
-app = FastAPI()
+# app = FastAPI()
 
 def fetch_loan_products():
     try:
-        res = requests.get("http://127.0.0.1:8000/loan/products")
+        BASE_URL = os.getenv("BASE_URL")
+        res = requests.get(f"{BASE_URL}/loan/products")
         return res.json().get("products", [])
     except Exception as e:
         print("Loan Fetch Error:", e)
         return []
 
-from fastapi.middleware.cors import CORSMiddleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# from fastapi.middleware.cors import CORSMiddleware
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 client = OpenAI(
     api_key=os.getenv("OPENROUTER_API_KEY"),
@@ -68,7 +71,7 @@ def format_indian_currency(amount):
         return f"₹{amount:,}"
 
 
-@app.post("/chat")
+@router.post("/chat")
 def chat(req: ChatRequest):
 
     session_id = req.session_id
