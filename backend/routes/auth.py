@@ -37,11 +37,17 @@ class ResendOTPRequest(BaseModel):
     email: EmailStr
 
 
+# @router.post("/register", status_code=201)
+# async def register(body: RegisterRequest):
+#     user = await auth_service.register(body.name, body.email, body.password, body.mobile)
+#     return {"message": "Registration successful. OTP sent to your email.", "user_id": str(user.inserted_id)}
+
+# For the deployment, we will skip OTP verification for registration to simplify the user experience.
 @router.post("/register", status_code=201)
 async def register(body: RegisterRequest):
-    user = await auth_service.register(body.name, body.email, body.password, body.mobile)
-    return {"message": "Registration successful. OTP sent to your email.", "user_id": str(user.inserted_id)}
-
+    return await auth_service.register(
+        body.name, body.email, body.password, body.mobile
+    )
 
 @router.post("/verify-otp")
 def verify_otp(body: OTPRequest):
