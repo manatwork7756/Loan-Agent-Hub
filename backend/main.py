@@ -10,20 +10,20 @@ from routes.payment import router as payment_router
 from routes.documents import router as documents_router
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()   
+# app = FastAPI()   
 
-origins = [
-    "http://localhost:5173",
-    "https://credo-ai.vercel.app/auth",
-]
+# origins = [
+#     "http://localhost:5173",
+#     "https://credo-ai.vercel.app/auth",
+# ]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],   # 👈 IMPORTANT
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],   # 👈 IMPORTANT
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,7 +45,9 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173", "http://localhost:3000"],
+    allow_origins=["https://credo-ai.vercel.app", 
+                   "http://localhost:5173", 
+                   "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
