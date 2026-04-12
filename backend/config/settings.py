@@ -2,7 +2,7 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    # ❌ OLD (optional: remove ya ignore)
+    # OLD (optional: remove or ignore)
     DATABASE_URL:       str = ""
     DATABASE_URL_LOANS: str = ""
 
