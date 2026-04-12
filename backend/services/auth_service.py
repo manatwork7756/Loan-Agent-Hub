@@ -44,7 +44,8 @@ async def send_otp_email(email: str, otp: str) -> bool:
             start_tls=True,
         )
         return True
-    except:
+    except Exception as e:          # for testing purposes, catch all exceptions and print the error. In production, consider logging this instead.
+        print("Email sending error:", e)  
         return False
 
 
@@ -56,6 +57,7 @@ class AuthService:
             raise HTTPException(status_code=400, detail="Email already registered")
 
         otp = generate_otp()
+        print("OTP:", otp)          # For testing purposes, print the OTP to the console. Remove this in production.
         expires = datetime.utcnow() + timedelta(minutes=settings.OTP_EXPIRY_MINUTES)
 
         user_data = {
@@ -71,7 +73,9 @@ class AuthService:
 
         result = users_collection.insert_one(user_data)
 
-        await send_otp_email(email, otp)
+        email_sent = await send_otp_email(email, otp)           # For testing purposes, we will print the OTP to the console instead of sending an email. In production, this should be removed and the email sending functionality should be used.
+        if not email_sent:
+            raise HTTPException(status_code=500, detail="Failed to send OTP email")
 
         return result
 
