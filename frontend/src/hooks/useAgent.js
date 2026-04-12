@@ -25,7 +25,7 @@ export function useAgent() {
     setTyping(true)
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/chatbot/", {
+      const res = await fetch("https://credoai-backend.onrender.com/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -38,11 +38,16 @@ export function useAgent() {
         })
       })
 
+      if (!res.ok) {
+        throw new Error("Server error")
+      }
+
       const data = await res.json()
 
       addMessage({
         role: 'assistant',
-        content: data.reply + (data.extra ? "\n\n" + data.extra : ""),
+        content: (data.response ||"No response from server") +
+                 (data.extra ? "\n\n" + data.extra : ""),
         agent: 'loan_agent'
       })
 

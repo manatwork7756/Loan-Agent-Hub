@@ -140,7 +140,7 @@ export default function ChatWindow() {
       
       console.log('📤 Sending request to backend:', JSON.stringify(requestBody, null, 2))
       
-      const res = await fetch("http://127.0.0.1:8000/chatbot/", {
+      const res = await fetch("https://credoai-backend.onrender.com/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -157,7 +157,8 @@ export default function ChatWindow() {
       console.log('📥 Backend response:', data)
       console.log('   Reply length:', data.reply?.length || 0)
 
-      const responseContent = data.reply || data.response || "No response received"
+      // const responseContent = data.reply || data.response || "No response received"
+      const responseContent = data.response || "No response received"
 
       addMessage({
         role: 'assistant',
