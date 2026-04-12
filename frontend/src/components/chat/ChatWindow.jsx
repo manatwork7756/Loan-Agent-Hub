@@ -111,7 +111,7 @@ export default function ChatWindow() {
   const { messages, isTyping, phase, selectedLoan, addMessage, setTyping, sessionId } = useChatStore()
   const { sendMessage, triggerAgent } = useAgent()
   const { user } = useAuthStore()
-  const userName = user?.name || 'friend'
+  const userName = user?.name || 'User'
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -140,7 +140,9 @@ export default function ChatWindow() {
       
       console.log('📤 Sending request to backend:', JSON.stringify(requestBody, null, 2))
       
-      const res = await fetch("https://credoai-backend.onrender.com/chat", {
+      // Use the chat service API
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://credoai-backend.onrender.com'
+      const res = await fetch(`${apiBaseUrl}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -155,14 +157,15 @@ export default function ChatWindow() {
       const data = await res.json()
       
       console.log('📥 Backend response:', data)
-      console.log('   Reply length:', data.reply?.length || 0)
+      console.log('   Response type:', typeof data)
+      console.log('   Keys:', Object.keys(data))
 
-      // const responseContent = data.reply || data.response || "No response received"
-      const responseContent = data.response || "No response received"
+      // Handle response content - the backend returns either 'response' or 'reply'
+      const responseContent = data.response || data.reply || "No response received"
 
       addMessage({
         role: 'assistant',
-        content: responseContent + (data.extra ? "\n\n" + data.extra : ""),
+        content: String(responseContent) + (data.extra ? "\n\n" + String(data.extra) : ""),
         agent: 'loan_agent'
       })
       
@@ -171,7 +174,7 @@ export default function ChatWindow() {
       console.error("❌ Chat init error:", err)
       addMessage({
         role: 'assistant',
-        content: "⚠️ Error initializing chat: " + err.message,
+        content: "⚠️ Error initializing chat. Please try again: " + err.message,
         agent: 'loan_agent'
       })
     } finally {

@@ -12,7 +12,7 @@ export function useAgent() {
   } = useChatStore()
 
   const { user } = useAuthStore()
-  const userName = user?.name || 'friend'
+  const userName = user?.name || 'User'
 
   const sendMessage = useCallback(async (text) => {
     if (!text?.trim() || isTyping) return
@@ -25,7 +25,9 @@ export function useAgent() {
     setTyping(true)
 
     try {
-      const res = await fetch("https://credoai-backend.onrender.com/chat", {
+      const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://credoai-backend.onrender.com'
+      
+      const res = await fetch(`${apiBaseUrl}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -46,8 +48,8 @@ export function useAgent() {
 
       addMessage({
         role: 'assistant',
-        content: (data.response ||"No response from server") +
-                 (data.extra ? "\n\n" + data.extra : ""),
+        content: String(data.response || data.reply || "No response from server") +
+                 (data.extra ? "\n\n" + String(data.extra) : ""),
         agent: 'loan_agent'
       })
 
@@ -56,7 +58,7 @@ export function useAgent() {
 
       addMessage({
         role: 'assistant',
-        content: "⚠️ Chatbot connection error",
+        content: "⚠️ Chatbot connection error. Please try again.",
         agent: 'loan_agent'
       })
     } finally {
