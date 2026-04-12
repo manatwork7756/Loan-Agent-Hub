@@ -11,9 +11,6 @@ const AGENTS = ['Loan', 'Document Collector', 'Chat']
 
 
 export default function Auth() {
-  // const [otp, setOtp] = useState("");
-  // const [showOtpField, setShowOtpField] = useState(false);
-  const [demoOtp, setDemoOtp] = useState("");
   const navigate = useNavigate()
   const { setAuth } = useAuthStore()
   const [mode, setMode] = useState('login')
@@ -81,19 +78,16 @@ export default function Auth() {
     }
 
     setError("");
+    setLoading(true);
     
     try {
-      const res = await authService.register({
+      await authService.register({
         name: form.name,
         email: form.email,
         password: form.password,
         mobile: form.mobile,
       });
 
-      const otpValue = res.data.otp;
-
-      setDemoOtp(otpValue); 
-      setOtpDigits(otpValue.split(""));
       setPendingEmail(form.email);
       setOtpFlow('register');
       setMode('otp');
@@ -101,6 +95,8 @@ export default function Auth() {
     } catch (e) {
       console.error(e);
       setError(e.response?.data?.detail || "Registration failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -228,13 +224,7 @@ export default function Auth() {
             <>
               <h3 className="font-head text-2xl font-bold text-slate-900 mb-1">Verify your email</h3>
               <p className="text-sm text-slate-500 mb-6">
-                We sent a 6-digit OTP to <strong>{pendingEmail}</strong>
-              </p>
-              <p className="text-sm text-green-600 mb-4 font-semibold text-center">
-                Demo OTP: {demoOtp}
-              </p>
-              <p className="text-xs text-gray-500 text-center">
-                (For demo purpose only)
+                Enter the 6-digit OTP sent to <strong>{pendingEmail}</strong>
               </p>
               <div className="flex gap-2.5 justify-center mb-6">
                 {otpDigits.map((d, i) => (

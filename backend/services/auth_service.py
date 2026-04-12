@@ -51,16 +51,17 @@ async def send_otp_email(email: str, otp: str) -> bool:
         msg.attach(MIMEText(text, "plain"))
         msg.attach(MIMEText(html, "html"))
 
-        async with aiosmtplib.SMTP(hostname=settings.SMTP_HOST, port=settings.SMTP_PORT) as smtp:
-            await smtp.starttls()
+        async with aiosmtplib.SMTP(hostname=settings.SMTP_HOST, port=settings.SMTP_PORT, start_tls=True) as smtp:
             await smtp.login(settings.SMTP_USER, settings.SMTP_PASS)
             await smtp.send_message(msg)
         
-        print(f"OTP email sent successfully to {email}")
+        print(f"✅ OTP email sent successfully to {email}")
         return True
         
     except Exception as e:
-        print(f"SMTP Error sending OTP to {email}: {str(e)}")
+        print(f"❌ SMTP Error sending OTP to {email}: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
@@ -91,7 +92,7 @@ class AuthService:
         # Send OTP email
         email_sent = await send_otp_email(email, otp)
         if not email_sent:
-            print(f"Warning: Failed to send OTP email to {email}")
+            print(f"⚠️  Warning: Failed to send OTP email to {email}, but user created")
 
         return {
             "message": "Registration successful. OTP has been sent to your email.",
