@@ -189,87 +189,91 @@ BE LIKE A REAL AGENT:
 
 REMEMBER: {username} is making an important decision. They're trusting you. Be worthy of that trust."""
             
-            detailed_explanation = ""
-            try:
-                print(f"📝 Generating AI explanation for {selected_loan.get('name', 'loan')}...")
-                explanation_response = client.chat.completions.create(
-                    model="meta-llama/llama-3-8b-instruct",
-                    messages=[
-                        {"role": "system", "content": system_prompt_explanation},
-                        {"role": "user", "content": f"Tell me all about the {selected_loan.get('name', 'loan')} and help me understand if it's right for me."}
-                    ],
-                    temperature=0.7,
-                    max_tokens=1500
-                )
-                detailed_explanation = explanation_response.choices[0].message.content
-                print(f"✅ AI Explanation generated successfully: {len(detailed_explanation)} characters")
-            except Exception as e:
-                print(f"❌ AI explanation error: {str(e)}")
-                # Fallback explanation with structured content - use ONLY selected loan data
-                fallback_type = selected_loan.get('loan_type', 'loan')
-                fallback_desc = selected_loan.get('description', f'This is our {selected_loan.get("name", "loan")} offering.')
-                fallback_formatted_amount = format_indian_currency(selected_loan.get('max_amount', 'N/A'))
-                fallback_rate = selected_loan.get('interest_rate', selected_loan.get('min_rate', 'N/A'))
-                
-                detailed_explanation = f"""Hey {username}! 👋 
+            # Create a simple, clear explanation in easy-to-understand language
+            loan_name = selected_loan.get('name', 'loan')
+            loan_type = selected_loan.get('loan_type', 'loan')
+            max_amount = format_indian_currency(selected_loan.get('max_amount', 'N/A'))
+            interest_rate = selected_loan.get('interest_rate', selected_loan.get('min_rate', 'N/A'))
+            min_tenure = selected_loan.get('min_tenure_months', 'N/A')
+            max_tenure = selected_loan.get('max_tenure_months', 'N/A')
+            proc_fee = selected_loan.get('processing_fee_pct', 'N/A')
+            features = selected_loan.get('features', [])
+            documents = selected_loan.get('documents_needed', [])
+            
+            # Build simple feature list
+            features_text = ""
+            if features:
+                features_text = "\n".join([f"✓ {f}" for f in features[:5]])
+            
+            # Build simple documents list
+            docs_text = ""
+            if documents:
+                docs_text = "\n".join([f"• {d}" for d in documents])
+            
+            detailed_explanation = f"""👋 Hi {username}!
 
-I'm so glad you're interested in our **{selected_loan.get('name', 'loan')}**. Let me tell you why this could be absolutely perfect for you.
+I'm CredoAI, your loan agent. You clicked "Ask AI" on the **{loan_name}**, and I'm here to explain everything about it in simple words.
 
-## What is the {selected_loan.get('name', 'loan')}?
+---
 
-{fallback_desc} 
+## What is the {loan_name}?
 
-In simple terms - this is a {fallback_type} loan that's designed specifically with customers like you in mind. It's straightforward, transparent, and we've helped thousands of people through this exact product.
+The {loan_name} is a **{loan_type}** that helps you borrow money quickly and easily. No complicated things - it's designed for people like you.
 
-## Why I Love This Loan for You
+---
 
-Here's what makes this stand out:
-{chr(10).join(['• **' + f.split(':')[0] + '** — ' + f if ':' in f else '• ' + f for f in selected_loan.get('features', ['Premium features available'])])}
+## The Important Numbers (What You Need to Know)
 
-These aren't just features on paper, {username} - these are genuine benefits that my past clients have really valued.
+💰 **How much can you borrow?**
+You can get up to **{max_amount}**
 
-## The Numbers (The Important Stuff)
+📊 **Interest Rate?**
+**{interest_rate}%** per year - this is what you pay extra on top of the amount you borrow
 
-- **How much can you borrow?** Up to {fallback_formatted_amount}
-- **Interest rate?** Starting at {fallback_rate}% per annum - and honestly, this is quite competitive
-- **How long to repay?** You can spread it from {selected_loan.get('min_tenure_months', 'various')} months up to {selected_loan.get('max_tenure_months', 'flexible')} months - so you can tailor it to your budget
-- **Processing fee?** {selected_loan.get('processing_fee_pct', 'N/A')}% of the loan amount
+⏱️ **How long to repay?**
+You can take **{min_tenure} to {max_tenure} months** - so you choose how fast or slow you want to pay back
 
-The great thing? These are not fixed numbers - depending on your profile, you might qualify for even better terms.
+💳 **Processing Fee?**
+**{proc_fee}%** of the loan amount - this is a one-time fee when we process your application
 
-## Who is This Best For?
+---
 
-{selected_loan.get('eligibility_notes', 'We look at your overall financial profile, not just one number')}
+## Why is this loan special?
 
-Do you fit this picture? I'd love to hear a bit more about your situation.
+{features_text if features_text else "This loan is designed to be simple and quick"}
 
-## What Documents Will You Need?
+---
 
-Good news - it's pretty straightforward:
-{chr(10).join(['📄 ' + doc for doc in selected_loan.get('documents_needed', ['Standard KYC documents'])])}
+## What do we need from you?
 
-I know documentation can seem intimidating, but these are documents most people already have. We can guide you through every step.
+It's very simple - just these documents:
 
-## How Does This Work?
+{docs_text if docs_text else "Standard documents we ask from everyone"}
 
-Here's the simple process:
-1. **You tell us what you need** - share your goals and situation
-2. **We assess your eligibility** - quick and transparent
-3. **You submit minimal documents** - nothing crazy, I promise
-4. **We verify and approve** - usually within 3-5 days
-5. **Money hits your account** - fast and clean
+Don't worry - these are documents you probably already have at home!
 
-## What Happens Next?
+---
 
-That depends on you, {username}! Here are your options:
+## How does it work? (Simple 3 Steps)
 
-👉 **Ask me questions** - Anything you want to know? Go ahead. No such thing as a "stupid question" in the financial world.
+1️⃣ **You tell us about yourself** - How much you need, what you'll use it for, about your monthly income
 
-👉 **Want details on eligibility?** - Tell me about your situation (income, current obligations) and I can give you a clear sense of what you might qualify for
+2️⃣ **We check if you qualify** - We quickly see if you're eligible (usually same day or next day)
 
-👉 **Ready to explore further?** - Great! We can start the process and I'll guide you every step of the way
+3️⃣ **Money comes to you** - Once approved, the money transfers to your bank account in 3-5 days
 
-Remember, {username} - I'm here to make this easy for you. My job is to make sure you get the right loan at the right terms. So what would be most helpful for you right now?"""
+---
+
+## So... what would you like to know?
+
+I'm here to answer any questions. You can ask me:
+• "Am I eligible for this loan?"
+• "What will my monthly payment be?"
+• "How fast can I get approval?"
+• "What if I have bad credit?"
+• Or anything else you're thinking about!
+
+Just tell me, and I'll explain in simple words. 😊"""
             
             # Store initial conversation with the explanation
             sessions[session_id]["messages"] = [
