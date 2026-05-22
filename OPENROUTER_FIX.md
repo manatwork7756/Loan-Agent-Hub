@@ -13,7 +13,7 @@ This error occurs when the OpenRouter API key is invalid, expired, or has no act
 
 Current `.env` setting:
 ```
-OPENROUTER_API_KEY=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
+
 ```
 
 ### 2. Verify Account Status
